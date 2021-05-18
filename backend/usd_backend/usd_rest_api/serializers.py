@@ -11,7 +11,7 @@ class EventSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Course
-        fields = ('id', 'teacher', 'contact', 'office_days', 'lesson_link', 'lesson_type', 'when', 'building', 'room', 'ects', 'info')
+        fields = ('id', 'name', 'teacher', 'contact', 'office_days', 'lesson_link', 'lesson_type', 'when', 'building', 'room', 'ects', 'info')
 
 
 class LessonSerializer(serializers.ModelSerializer):
