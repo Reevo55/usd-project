@@ -14,6 +14,12 @@ class CourseSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'teacher', 'contact', 'office_days', 'lesson_link', 'lesson_type', 'when', 'building', 'room', 'ects', 'info')
 
 
+class CourseLessonsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Lesson
+        fields = ('id', 'when', 'start_time', 'end_time', 'building', 'teacher', 'room')
+
+
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Lesson

@@ -33,7 +33,7 @@ class Lesson(models.Model):
     building = models.CharField(max_length=255, null=True)
     teacher = models.CharField(max_length=255, null=True)
     room = models.CharField(max_length=255, null=True)
-    group = models.ForeignKey(Course, on_delete=models.CASCADE)
+    group = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
 
 
 class Account(models.Model):
