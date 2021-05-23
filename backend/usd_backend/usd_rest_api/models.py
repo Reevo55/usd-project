@@ -3,15 +3,6 @@ import datetime
 
 
 # Create your models here.
-class Event(models.Model):
-    when = models.DateField()
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-    name = models.CharField(max_length=255)
-    place = models.CharField(max_length=255, null=True)
-    notes = models.CharField(max_length=255, null=True)
-
-
 class Course(models.Model):
     name = models.CharField(max_length=255)
     teacher = models.CharField(max_length=255, null=True)
@@ -41,6 +32,16 @@ class Account(models.Model):
     password = models.CharField(max_length=255)
     last_login = models.DateField(default=datetime.date.today)
     groups = models.ManyToManyField(Course, through='Comment')
+
+
+class Event(models.Model):
+    when = models.DateField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    name = models.CharField(max_length=255)
+    place = models.CharField(max_length=255, null=True)
+    notes = models.CharField(max_length=255, null=True)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
 
 
 class Comment(models.Model):

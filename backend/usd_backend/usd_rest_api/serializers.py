@@ -5,6 +5,12 @@ from . import models
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Event
+        fields = ('id', 'when', 'start_time', 'end_time', 'name', 'place', 'notes', 'account')
+
+
+class AccountEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Event
         fields = ('id', 'when', 'start_time', 'end_time', 'name', 'place', 'notes')
 
 
@@ -36,3 +42,9 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
         fields = ('id', 'account', 'group', 'content')
+
+
+class CourseCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Comment
+        fields = ('id', 'account', 'content')
