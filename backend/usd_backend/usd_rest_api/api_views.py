@@ -1,7 +1,9 @@
+from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from drf_multiple_model.viewsets import FlatMultipleModelAPIViewSet
 import datetime
 
 from . import models
@@ -59,24 +61,6 @@ class AccountViewset(viewsets.ModelViewSet):
     queryset = models.Account.objects.all()
     serializer_class = serializers.AccountSerializer
 
-    @action(detail=True, methods=['get'])
-    def calendar(self, request, pk=None):
-        from_string = request.query_params.get('from')
-        to_string = request.query_params.get('to')
-
-        from_date = datetime.datetime.strptime(from_string[1:-1], "%Y-%m-%d").date()
-        to_date = datetime.datetime.strptime(to_string[1:-1], "%Y-%m-%d").date()
-
-        courses = models.Course.objects.filter(account=self.get_object())
-        lessons = []
-
-        for course in courses:
-            lessons += models.Lesson.objects.filter(group=course, start_time__gt=from_date, end_time__lt=to_date)
-
-        serializer = serializers.CourseLessonsSerializer(lessons, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 class EventsViewSet(mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
@@ -118,3 +102,20 @@ class AccountCoursesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         account.groups.remove(course)
 
         return Response(status=status.HTTP_200_OK)
+
+
+class CalendarViewSet(FlatMultipleModelAPIViewSet):
+
+    def get_querylist(self):
+        from_string = self.request.query_params['from']
+        to_string = self.request.query_params['to']
+
+        lessons = models.Lesson.objects.filter(group__account=self.kwargs['account_pk'], when__range=[from_string, to_string])
+        events = models.Event.objects.filter(account=self.kwargs['account_pk'], when__range=[from_string, to_string])
+
+        return [
+            {'queryset': lessons,
+             'serializer_class': serializers.LessonSerializer},
+            {'queryset': events,
+             'serializer_class': serializers.AccountEventSerializer},
+        ]
