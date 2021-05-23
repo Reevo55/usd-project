@@ -83,11 +83,21 @@ class EventsViewSet(mixins.ListModelMixin,
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AccountCoursesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class AccountCoursesViewSet(viewsets.GenericViewSet):
     serializer_class = serializers.CourseSerializer
 
     def get_queryset(self):
         return models.Course.objects.filter(account=self.kwargs['account_pk'])
+
+    def list(self, request, account_pk=None):
+        if 'type' in request.query_params:
+            courses = self.get_queryset().filter(lesson_type=request.query_params['type'])
+        else:
+            courses = self.get_queryset()
+
+        serializer = serializers.CourseSerializer(courses, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, pk=None, account_pk=None):
         account = get_object_or_404(models.Account, pk=account_pk)
@@ -107,11 +117,15 @@ class AccountCoursesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 class CalendarViewSet(FlatMultipleModelAPIViewSet):
 
     def get_querylist(self):
-        from_string = self.request.query_params['from']
-        to_string = self.request.query_params['to']
+        if 'from' in self.request.GET and 'to' in self.request.GET:
+            from_string = self.request.query_params['from']
+            to_string = self.request.query_params['to']
 
-        lessons = models.Lesson.objects.filter(group__account=self.kwargs['account_pk'], when__range=[from_string, to_string])
-        events = models.Event.objects.filter(account=self.kwargs['account_pk'], when__range=[from_string, to_string])
+            lessons = models.Lesson.objects.filter(group__account=self.kwargs['account_pk'], when__range=[from_string, to_string])
+            events = models.Event.objects.filter(account=self.kwargs['account_pk'], when__range=[from_string, to_string])
+        else:
+            lessons = models.Lesson.objects.filter(group__account=self.kwargs['account_pk'])
+            events = models.Event.objects.filter(account=self.kwargs['account_pk'])
 
         return [
             {'queryset': lessons,
