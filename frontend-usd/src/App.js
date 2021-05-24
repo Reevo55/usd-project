@@ -8,15 +8,15 @@ import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 function App() {
   return (
     <div className="App">
-      <SiteLayout>
-        <Router>
+      <Router>
+        <SiteLayout>
           <Switch>
             <Route path="/" exact component={Home} />
             <Route path="/courses" exact component={CoursesList} />
             <Route path="/courses/:id" component={Course} />
           </Switch>
-        </Router>
-      </SiteLayout>
+        </SiteLayout>
+      </Router>
     </div>
   );
 }

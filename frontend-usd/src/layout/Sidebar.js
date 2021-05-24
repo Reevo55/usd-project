@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Typography } from 'antd';
+import { Link, BrowserRouter as Router } from "react-router-dom";
+import { Layout, Menu } from 'antd';
 import { HomeOutlined, ClockCircleOutlined, UnorderedListOutlined, BellOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
+
 const { Sider } = Layout;
-const { Link } = Typography;
 
 
 const Sidebar = () => {
@@ -18,21 +19,21 @@ const Sidebar = () => {
         },
         {
             title: 'Ostatnio przeglądane',
-            path: '/',
+            path: '/courses/:id',
             icon: <ClockCircleOutlined />,
         },
         {
             title: 'Lista zajęć',
-            path: '/',
+            path: '/courses',
             icon: <UnorderedListOutlined />,
         },
         {
             title: 'Aktualności',
-            path: '/',
+            path: '/courses/:id',
             icon: <BellOutlined />,
         },
     ];
-    const courses =[
+    const courses = [
         {
             courseName: 'Hurtownie danych',
             tag: 'HD',
@@ -70,6 +71,7 @@ const Sidebar = () => {
                 className: 'icon-link',
                 onClick: handleToggleMenu,
             })}>
+
             <Menu theme="light" mode="inline" defaultSelectedKeys={['Home']}>
                 {mapMenu(menu)}
                 <Menu.Divider style={{ margin: '0 24px' }} />
