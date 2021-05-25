@@ -17,15 +17,21 @@
     font-weight: 300;
 }
 
-a.ant-typography {
-    color: #000;
-
-    &:target {
-        color: #1890ff;
-    }
+.courses-group {
+    margin-bottom: 16px;
 }
 
-.course-list-item {
+.courses-group-title {
+    position: relative;
+    font-size: larger;
+    font-weight: 700;
+    margin: 0 0 4px 44px;
+    padding-left: 18px;
+    border-left: 4px solid #E9C46A;
+}
+
+.courses-group-item {
+    position: relative;
     align-items: center;
     display: flex;
     flex-direction: row;
@@ -33,12 +39,38 @@ a.ant-typography {
     font-weight: 300;
     width: 100%;
     margin: 0;
-    padding: 0;
+    padding: 4px;
+    transition: background-color 0.3s;
+
+    &::after {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        border-right: 3px solid #1890ff;
+        transform: scaleY(0.0001);
+        opacity: 0;
+        transition: transform 0.15s cubic-bezier(0.215, 0.61, 0.355, 1), opacity 0.15s cubic-bezier(0.215, 0.61, 0.355, 1);
+        content: '';
+    }
+
+    &:hover {
+        background-color: #e6f7ff;
+
+        & > span {
+            color: #1890ff;
+        }
+
+        &::after {
+            transform: scaleY(1);
+            opacity: 1;
+        }
+    }
 
     & > .course-code {
         color: #dbdbdb;
         font-size: x-small;
-        font-weight: 700;
+        font-weight: 400;
     }
 
     & > span {
