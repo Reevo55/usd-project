@@ -1,4 +1,7 @@
 import { Calendar, Badge } from "antd";
+import moment from "moment";
+import "moment/locale/pl";
+moment.locale("pl");
 
 function getListData(value) {
   let listData;
