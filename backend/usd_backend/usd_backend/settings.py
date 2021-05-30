@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'usd_rest_api',
     'drf_multiple_model',
     'corsheaders',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [

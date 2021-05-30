@@ -17,34 +17,40 @@ class AccountEventSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Course
-        fields = ('id', 'name', 'teacher', 'contact', 'office_days', 'lesson_link', 'lesson_type', 'when', 'building', 'room', 'ects', 'info')
+        fields = ('id', 'name', 'lesson_link', 'lesson_type', 'when', 'building', 'room', 'ects', 'info', 'teacher')
 
 
 class CourseLessonsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Lesson
-        fields = ('id', 'when', 'start_time', 'end_time', 'building', 'teacher', 'room')
+        fields = ('id', 'when', 'start_time', 'end_time', 'building', 'room')
 
 
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Lesson
-        fields = ('id', 'when', 'start_time', 'end_time', 'building', 'teacher', 'room', 'group')
+        fields = ('id', 'when', 'start_time', 'end_time', 'building', 'room', 'group')
 
 
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Account
-        fields = ('id', 'login', 'password', 'last_login', 'groups')
+        fields = ('id', 'login', 'password', 'groups')
 
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
-        fields = ('id', 'account', 'group', 'content')
+        fields = ('id', 'account', 'group', 'content', 'when')
 
 
 class CourseCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
-        fields = ('id', 'account', 'content')
+        fields = ('id', 'account', 'content', 'when')
+
+
+class TeacherSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Teacher
+        fields = ('id', 'name', 'title', 'contact', 'office_days')

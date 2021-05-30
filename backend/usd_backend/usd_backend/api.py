@@ -6,6 +6,7 @@ from django.conf.urls import url, include
 router = routers.SimpleRouter()
 router.register(r'courses', myapp_views.CourseViewset)
 router.register(r'accounts', myapp_views.AccountViewset)
+router.register(r'teachers', myapp_views.TeacherViewset)
 
 lessons_router = routers.NestedSimpleRouter(router, r'courses', lookup='course')
 lessons_router.register(r'lessons', myapp_views.LessonsViewSet, basename='course-lessons')
