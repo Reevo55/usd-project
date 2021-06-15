@@ -1,0 +1,32 @@
+version: '3'
+services:
+  db:
+    image: limisie/usd-mysql
+    container_name: usd-mysql
+    environment:
+      MYSQL_DATABASE: 'django_db'
+      MYSQL_USER: 'mysql'
+      MYSQL_PASSWORD: 'usdpassword'
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3306:3306'
+    networks:
+      - hostnetwork
+  web:
+    image: limisie/usd-server
+    container_name: usd-django
+    restart: always
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/usd_backend
+    depends_on:
+      - db
+    networks:
+      - hostnetwork
+networks:
+  hostnetwork:
+    external: true
+    driver: bridge
