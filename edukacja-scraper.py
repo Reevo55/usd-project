@@ -2,9 +2,12 @@ import requests
 from bs4 import BeautifulSoup
 import sys
 from copy import copy
+import json
 
 login_url = 'https://edukacja.pwr.wroc.pl/EdukacjaWeb/logInUser.do'
 base_url = 'https://edukacja.pwr.wroc.pl'
+
+COURSES = []
 
 
 def save_to_html(response, filename='test.html'):
@@ -71,7 +74,6 @@ def find_enrollments(session, href):
         }
 
         if payload['event_ZapisyPrzegladanieGrup'] == 'Przeglądanie grup':
-            print(payload)
             find_courses(session, payload, href)
 
 
@@ -115,20 +117,16 @@ def find_courses(session, payload, href):
     url = base_url + relative_url + "?" + params_string
 
     response = session.post(url, data=payload)
-    save_to_html(response)
     soup = BeautifulSoup(response.content, 'html.parser')
 
     # przejscie po kazdym kursie z wektora zapisowego
     courses_table = soup.find('a', {"name": "hrefKursyWGrupieTabela"})
 
     if courses_table is None:
-        print("Brak kursów")
         return
 
     courses_table = courses_table.findNext('table')
     pages = courses_table.find_all('input', {"class": "paging-numeric-btn"})
-    for page in pages:
-        print(page)
 
     for i in range(len(pages) + 1):
         page_payload = {
@@ -137,10 +135,9 @@ def find_courses(session, payload, href):
             "pagingRangeStart": i * 10,
             "event": "positionIterRangeStartKwGB"
         }
-        print(page_payload)
+        # print(page_payload)
 
         response = session.post(base_url + relative_url, data=page_payload)
-        save_to_html(response, f'{i}.{payload["rowId"]}.html')
         soup = BeautifulSoup(response.content, 'lxml')
 
         courses_table = soup.find('a', {"name": "hrefKursyWGrupieTabela"}).findNext('table')
@@ -168,13 +165,10 @@ def load_courses(session, href):
     courses_table = soup.find('a', {"name": "hrefGrupyZajecioweKursuTabela"})
 
     if courses_table is None:
-        print("Brak grup zajeciowych")
         return
 
     courses_table = courses_table.findNext('table')
     pages = courses_table.find_all('input', {"class": "paging-numeric-btn"})
-    for page in pages:
-        print(' ' + str(page))
 
     for i in range(len(pages) + 1):
         page_payload = {
@@ -183,20 +177,66 @@ def load_courses(session, href):
             "pagingRangeStart": i * 10,
             "event": "positionIterRangeStartGZK"
         }
-        print('     ' + str(page_payload))
 
         response = session.post(base_url + relative_url, data=page_payload)
-        save_to_html(response, f'{i}.html')
         soup = BeautifulSoup(response.content, 'lxml')
 
+        courses_table = soup.find('a', {"name": "hrefGrupyZajecioweKursuTabela"}).findNext('table')
+        rows = courses_table.find_all('td', {"class": "BIALA"})
 
-# pagingIterName: GrupyZajecioweKursuWEKROViewIterator
-# pagingRangeStart: 10
-# event: positionIterRangeStartGZK
+        data_keys = [
+            "code", "", "name", "", "", "", "", "", "teacher_id", "lesson_type", "", "", "", "", "when"
+        ]
 
-# pagingIterName: KursyWEKROViewIterator
-# pagingRangeStart: 20
-# event: positionIterRangeStartKwGB
+        new_course = {}
+
+        while len(rows) >= 15:
+            for key in data_keys:
+                row = rows.pop(0)
+                if key in ["code", "name", "lesson_type", "teacher_id"]:
+                    new_course[key] = row.text.strip()
+                elif key == "when":
+                    new_course[key] = row.findNext('td').text.strip()
+
+                    # this row also contains link to every lesson for this course which we want to fetch
+                    try:
+                        lesson_payload = {
+                            "clEduWebSESSIONTOKEN": row.findNext('input', {"name": "clEduWebSESSIONTOKEN"})['value'],
+                            "cl.edu.web.TOKEN": row.findNext('input', {"name": "cl.edu.web.TOKEN"})['value'],
+                            "grzId": row.findNext('input', {"name": "grzId"})['value'],
+                            "paramPowrotAction": row.findNext('input', {"name": "paramPowrotAction"})['value'],
+                            "paramPowrotEvent": row.findNext('input', {"name": "paramPowrotEvent"})['value'],
+                            "paramPowrotButtonBundle": row.findNext('input', {"name": "paramPowrotButtonBundle"})['value'],
+                            "paramPowrotButtonKey": row.findNext('input', {"name": "paramPowrotButtonKey"})['value'],
+                            "event_PokazTerminy": row.findNext('input', {"name": "event_PokazTerminy"})['value'],
+                        }
+                    except TypeError:
+                        save_to_html(response)
+                        print("TypeError!")
+                        return
+
+                    response = session.post('https://edukacja.pwr.wroc.pl/EdukacjaWeb/terminyGrupy.do',
+                                            data=lesson_payload)
+                    soup = BeautifulSoup(response.content, 'lxml')
+                    td_rows = soup.find_all("td", {"class": "BIALA"})
+
+                    td_keys = ["", "when", "start_time", "end_time", "", "room", "building"]
+
+                    new_course["lesson"] = []
+                    new_lesson = {}
+
+                    while len(td_rows) >= 7:
+                        print(len(td_rows))
+                        for td_key in td_keys:
+                            row = td_rows.pop(0)
+                            if td_key != "":
+                                new_lesson[td_key] = row.text.strip()
+
+                        new_course["lesson"].append(copy(new_lesson))
+                        print(new_course)
+
+            COURSES.append(copy(new_course))
+
 
 def login():
     with requests.session() as c:
@@ -241,3 +281,6 @@ def login():
 
 if __name__ == "__main__":
     login()
+    with open("courses.json", 'w', encoding="utf-8") as f:
+        json.dump(COURSES, f)
+    print(COURSES)
