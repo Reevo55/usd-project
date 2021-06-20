@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -32,8 +33,7 @@ class Lesson(models.Model):
 
 
 class Account(models.Model):
-    login = models.CharField(max_length=255, unique=True)
-    password = models.CharField(max_length=255)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     image_url = models.CharField(max_length=1024, null=True)
     groups = models.ManyToManyField(Course, through='Comment')
 

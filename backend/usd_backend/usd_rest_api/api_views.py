@@ -1,16 +1,16 @@
 from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status, mixins
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from drf_multiple_model.viewsets import FlatMultipleModelAPIViewSet
-import datetime
+from rest_framework.permissions import IsAuthenticated
 
 from . import models
 from . import serializers
 
 
 class CourseViewset(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = models.Course.objects.all()
     serializer_class = serializers.CourseSerializer
 
@@ -20,6 +20,7 @@ class LessonsViewSet(mixins.ListModelMixin,
                      mixins.UpdateModelMixin,
                      mixins.DestroyModelMixin,
                      viewsets.GenericViewSet):
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CourseLessonsSerializer
 
     def get_queryset(self):
@@ -41,6 +42,7 @@ class CommentsViewSet(mixins.ListModelMixin,
                       mixins.UpdateModelMixin,
                       mixins.DestroyModelMixin,
                       viewsets.GenericViewSet):
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CourseCommentSerializer
 
     def get_queryset(self):
@@ -57,7 +59,12 @@ class CommentsViewSet(mixins.ListModelMixin,
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AccountViewset(viewsets.ModelViewSet):
+class AccountViewset(mixins.ListModelMixin,
+                     mixins.RetrieveModelMixin,
+                     mixins.UpdateModelMixin,
+                     mixins.DestroyModelMixin,
+                     viewsets.GenericViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = models.Account.objects.all()
     serializer_class = serializers.AccountSerializer
 
@@ -67,6 +74,7 @@ class EventsViewSet(mixins.ListModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin,
                     viewsets.GenericViewSet):
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.AccountEventSerializer
 
     def get_queryset(self):
@@ -84,6 +92,7 @@ class EventsViewSet(mixins.ListModelMixin,
 
 
 class AccountCoursesViewSet(viewsets.GenericViewSet):
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.CourseSerializer
 
     def get_queryset(self):
@@ -115,6 +124,7 @@ class AccountCoursesViewSet(viewsets.GenericViewSet):
 
 
 class CalendarViewSet(FlatMultipleModelAPIViewSet):
+    permission_classes = (IsAuthenticated,)
 
     def get_querylist(self):
         if 'from' in self.request.GET and 'to' in self.request.GET:
@@ -136,5 +146,6 @@ class CalendarViewSet(FlatMultipleModelAPIViewSet):
 
 
 class TeacherViewset(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = models.Teacher.objects.all()
     serializer_class = serializers.TeacherSerializer
