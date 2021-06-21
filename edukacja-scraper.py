@@ -193,6 +193,7 @@ def load_courses(session, href):
         while len(rows) >= 15:
             for key in data_keys:
                 row = rows.pop(0)
+                print(row)
                 if key in ["code", "name", "lesson_type", "teacher_id"]:
                     new_course[key] = row.text.strip()
                 elif key == "when":

@@ -23,7 +23,7 @@ def create_teacher(teacher, access_token):
 
     response = requests.post(TEACHERS_URL, data=payload, headers={'Authorization': f'Bearer {access_token}'})
     json_data = json.loads(response.text)
-    print(json_data)
+
     return json_data['id']
 
 
