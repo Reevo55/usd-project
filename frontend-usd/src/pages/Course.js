@@ -25,7 +25,7 @@ const SiderPart = ({ children, title }) => (
 const Course = ({ match }) => {
   const [course, setCourse] = useState([]);
   const [teacher, setTeacher] = useState([]);
-  const [comments2, setComments] = useState([]);
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     try {
@@ -39,61 +39,15 @@ const Course = ({ match }) => {
             console.log(res2.data);
           });
         });
+        CourseService.getComments(match.params.id).then((res) => {
+          setComments(res.data);
+          console.log(res.data);
+        });
       }
     } catch (err) {
       console.log(err);
     }
   }, []);
-
-  // const course = {
-  //   courseName: "Sztuczna inteligencja",
-  //   lessonType: "laboratorium",
-  //   teacher: {
-  //     teacherName: "Jan Kowalski",
-  //     officeDays: "13:00 - 15:00 poniedziałek",
-  //     contact: "jankowalski@pwr.edu.pl",
-  //   },
-  //   link: "https://pwr-edu.zoom.us/j/92500313824?pwd=KzNWcmdYV2pabVYzWTh1enEzS003QT09",
-  //   code: "Z00-00x",
-  //   info: [
-  //     {
-  //       title: "Zasady zaliczania",
-  //       body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
-  //               - aute irure dolor in reprehenderit \
-  //               - in voluptate velit esse cillum \
-  //               - dolore eu fugiat nulla pariatur \
-  //               Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-  //     },
-  //     {
-  //       title: "Plan",
-  //       body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
-  //               - aute irure dolor in reprehenderit \
-  //               - in voluptate velit esse cillum \
-  //               - dolore eu fugiat nulla pariatur \
-  //               Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-  //     },
-  //   ],
-  // };
-  const comments = [
-    {
-      account: {
-        login: "login",
-        avatarPath: "https://picsum.photos/100",
-      },
-      content:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date: "10.03.2021",
-    },
-    {
-      account: {
-        login: "login",
-        avatarPath: "https://picsum.photos/100",
-      },
-      content:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date: "10.03.2021",
-    },
-  ];
 
   return (
     <PageHeader
@@ -112,11 +66,11 @@ const Course = ({ match }) => {
           </ContentPart>
         </Content>
         <Sider className="site-layout">
-          <SiderPart title="prowadzący">{course.teacher.teacherName}</SiderPart>
+          <SiderPart title="prowadzący">{teacher.title} {teacher.name}</SiderPart>
           <SiderPart title="konsultacje">
-            <div>{course.teacher.officeDays}</div>
+            <div>{teacher.office_days}</div>
           </SiderPart>
-          <SiderPart title="kontakt">{course.teacher.contact}</SiderPart>
+          <SiderPart title="kontakt">{teacher.contact}</SiderPart>
           <SiderPart title="uczestnicy">
             <div>
               <Avatar.Group>
