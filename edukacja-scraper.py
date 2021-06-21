@@ -193,11 +193,16 @@ def load_courses(session, href):
         while len(rows) >= 15:
             for key in data_keys:
                 row = rows.pop(0)
-                print(row)
+                # print(row)
                 if key in ["code", "name", "lesson_type", "teacher_id"]:
                     new_course[key] = row.text.strip()
                 elif key == "when":
-                    new_course[key] = row.findNext('td').text.strip()
+                    text = row.findNext('td').text.split(',')
+
+                    if len(text) == 3:
+                        new_course[key] = text[0].strip()
+                        new_course['building'] = text[1].strip()
+                        new_course['room'] = text[2].strip()
 
                     # this row also contains link to every lesson for this course which we want to fetch
                     try:
@@ -227,15 +232,14 @@ def load_courses(session, href):
                     new_lesson = {}
 
                     while len(td_rows) >= 7:
-                        print(len(td_rows))
                         for td_key in td_keys:
                             row = td_rows.pop(0)
                             if td_key != "":
                                 new_lesson[td_key] = row.text.strip()
 
                         new_course["lesson"].append(copy(new_lesson))
-                        print(new_course)
 
+            print(new_course)
             COURSES.append(copy(new_course))
 
 

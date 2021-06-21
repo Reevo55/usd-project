@@ -18,7 +18,7 @@ class AccountEventSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Course
-        fields = ('id', 'name', 'lesson_link', 'lesson_type', 'when', 'building', 'room', 'ects', 'info', 'teacher')
+        fields = ('id', 'code', 'name', 'lesson_link', 'lesson_type', 'when', 'building', 'room', 'info', 'teacher')
 
 
 class CourseLessonsSerializer(serializers.ModelSerializer):

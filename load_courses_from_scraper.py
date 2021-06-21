@@ -2,9 +2,9 @@ import requests
 import json
 import sys
 
-LOGIN_URL = "http://127.0.0.1:8000/api/token/"
-COURSES_URL = "http://127.0.0.1:8000/api/courses/"
-TEACHERS_URL = "http://127.0.0.1:8000/api/teachers/"
+LOGIN_URL = "http://localhost:8000/api/token/"
+COURSES_URL = "http://localhost:8000/api/courses/"
+TEACHERS_URL = "http://localhost:8000/api/teachers/"
 LESSONS_URL = "/lessons/"
 
 
@@ -66,8 +66,14 @@ def create_course(course, access_token):
     payload = {
         "name": course["name"],
         "lesson_type": course["lesson_type"],
-        "code": course["code"]
+        "code": course["code"],
     }
+
+    optional_keys = ["when", "building", "room"]
+
+    for key in optional_keys:
+        if key in course:
+            payload[key] = course[key]
 
     if teacher_id is not None:
         payload["teacher"] = int(teacher_id)
@@ -121,13 +127,8 @@ def main():
     access_token = get_token(username, password)
 
     for course in courses:
-        teacher_name = ' '.join(course['teacher_id'].split()[-2:])
-        teacher_id = get_teacher_id(teacher_name, access_token)
-
-        course_id = get_course_id({
-            "name": course["name"],
-            "lesson_type": course["lesson_type"],
-            "teacher": teacher_id}, access_token)
+        print(course)
+        course_id = get_course_id({"code": course["code"]}, access_token)
 
         if course_id is None:
             # add new course

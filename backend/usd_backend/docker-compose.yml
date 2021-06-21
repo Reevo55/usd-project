@@ -1,7 +1,7 @@
 version: '3'
 services:
   db:
-    image: limisie/usd-mysql
+    image: mysql:latest
     container_name: usd-mysql
     environment:
       MYSQL_DATABASE: 'django_db'

@@ -18,7 +18,6 @@ class Course(models.Model):
     when = models.CharField(max_length=255, null=True)
     building = models.CharField(max_length=255, null=True)
     room = models.CharField(max_length=255, null=True)
-    ects = models.IntegerField(null=True)
     info = models.CharField(max_length=4096, null=True)
     teacher = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING, null=True)
 
