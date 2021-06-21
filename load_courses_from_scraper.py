@@ -115,7 +115,7 @@ def main():
         password = sys.argv[2]
         filename = sys.argv[3]
 
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding='utf-8') as f:
         courses = json.load(f)
 
     access_token = get_token(username, password)
