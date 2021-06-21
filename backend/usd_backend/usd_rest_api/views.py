@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from . import serializers
 from . import models
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 
 # Create your views here.
@@ -24,3 +26,20 @@ def create_auth(request):
         return Response(serialized.data, status=status.HTTP_201_CREATED)
     else:
         return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        account = models.Account.objects.get(user_id=user.id)
+
+        # Add custom claims
+        token['account_id'] = account.pk
+        # ...
+
+        return token
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
