@@ -5,6 +5,12 @@ import pl_PL from "antd/lib/locale-provider/pl_PL";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import axios from "axios";
+
+axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.headers.common = {
+  Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+};
 
 ReactDOM.render(
   <ConfigProvider locale={pl_PL}>

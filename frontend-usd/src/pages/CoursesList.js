@@ -1,12 +1,22 @@
-import React from "react";
-import { PageHeader, Layout, Divider, Typography } from "antd";
+import React, { useEffect, useState } from "react";
+import { PageHeader, Layout, Divider } from "antd";
 import CoursesGroup from "../components/CoursesGroup";
+import AccountService from "../services/AccountService";
 import "../styles/course.less";
 
 const { Content } = Layout;
 
-class CoursesList extends React.Component {
-  courses = [
+function CoursesList() {
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    AccountService.getCourses().then((res) => {
+      console.log("[FETCHED COURSES]", res.data);
+      setCourses(res.data);
+    });
+  }, []);
+
+  const mockCourses = [
     {
       courseName: "Sztuczna inteligencja",
       lessonType: "laboratorium",
@@ -45,23 +55,21 @@ class CoursesList extends React.Component {
     },
   ];
 
-  render() {
-    return (
-      <PageHeader
-        className="site-page-header-responsive site-layout-background"
-        onBack={() => window.history.back()}
-        title="Moje grupy"
-      >
-        <Divider />
-        <Layout className="site-layout">
-          <Content>
-            <CoursesGroup title="Sztuczna inteligencja" courses={this.courses} />
-            <CoursesGroup title="Hurtownie danych" courses={this.courses} />
-          </Content>
-        </Layout>
-      </PageHeader>
-    );
-  }
+  return (
+    <PageHeader
+      className="site-page-header-responsive site-layout-background"
+      onBack={() => window.history.back()}
+      title="Moje grupy"
+    >
+      <Divider />
+      <Layout className="site-layout">
+        <Content>
+          <CoursesGroup title="Sztuczna inteligencja" courses={mockCourses} />
+          <CoursesGroup title="Hurtownie danych" courses={mockCourses} />
+        </Content>
+      </Layout>
+    </PageHeader>
+  );
 }
 
 export default CoursesList;
