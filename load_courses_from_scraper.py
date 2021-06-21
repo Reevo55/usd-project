@@ -127,7 +127,6 @@ def main():
     access_token = get_token(username, password)
 
     for course in courses:
-        print(course)
         course_id = get_course_id({"code": course["code"]}, access_token)
 
         if course_id is None:

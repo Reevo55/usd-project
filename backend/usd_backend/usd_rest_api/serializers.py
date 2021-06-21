@@ -33,6 +33,14 @@ class LessonSerializer(serializers.ModelSerializer):
         fields = ('id', 'when', 'start_time', 'end_time', 'building', 'room', 'group')
 
 
+class CourseWithLessonsSerializer(serializers.ModelSerializer):
+    lessons = LessonSerializer(many=True, read_only=False)
+
+    class Meta:
+        model = models.Course
+        fields = ('id', 'code', 'name', 'lesson_link', 'lesson_type', 'when', 'building', 'room', 'info', 'teacher', 'lessons')
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -50,6 +58,15 @@ class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Account
+        fields = ('id', 'user', 'image_url')
+
+
+class AccountWithCourseSerializer(serializers.ModelSerializer):
+    user = UserSerializer(many=False, read_only=False)
+    groups = CourseSerializer(many=True, read_only=False)
+
+    class Meta:
+        model = models.Account
         fields = ('id', 'user', 'image_url', 'groups')
 
 
@@ -60,6 +77,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CourseCommentSerializer(serializers.ModelSerializer):
+    account = AccountSerializer(many=False, read_only=True)
+
     class Meta:
         model = models.Comment
         fields = ('id', 'account', 'content', 'when')
