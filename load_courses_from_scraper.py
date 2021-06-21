@@ -140,7 +140,7 @@ def main():
                 lesson_id = get_lesson_id({
                     "when": lesson["when"],
                     "start_time": lesson["start_time"],
-                    "end_time": ["end_time"]
+                    "end_time": lesson["end_time"]
                 }, course_id, access_token)
 
                 if lesson_id is None:
