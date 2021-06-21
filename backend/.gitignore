@@ -1,1 +1,5 @@
 .idea/
+usd_backend/usd_backend/__pycache__/
+usd_backend/usd_rest_api/__pycache__/
+usd_backend/usd_rest_api/migrations/__pycache__/
+.gitignore
