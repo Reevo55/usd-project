@@ -123,6 +123,21 @@ class AccountCoursesViewSet(viewsets.GenericViewSet):
         return Response(status=status.HTTP_200_OK)
 
 
+class CoursesAccountViewSet(viewsets.GenericViewSet):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = serializers.AccountSerializer
+
+    def get_queryset(self):
+        course = models.Course.objects.get(id=self.kwargs['course_pk'])
+        return course.account_set.all()
+
+    def list(self, request, course_pk=None):
+        accounts = self.get_queryset()
+        serializer = serializers.AccountSerializer(accounts, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class CalendarViewSet(FlatMultipleModelAPIViewSet):
     permission_classes = (IsAuthenticated,)
 
