@@ -2,7 +2,7 @@ import React from "react";
 import { PageHeader, Divider, Layout, Typography, Avatar } from "antd";
 import CourseActivity from "../components/CourseActivity";
 import "../styles/course.less";
-
+import { useHistory } from "react-router-dom";
 const { Content, Sider } = Layout;
 const { Text, Title, Link } = Typography;
 

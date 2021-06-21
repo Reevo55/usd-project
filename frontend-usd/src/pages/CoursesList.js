@@ -3,17 +3,29 @@ import { PageHeader, Layout, Divider } from "antd";
 import CoursesGroup from "../components/CoursesGroup";
 import AccountService from "../services/AccountService";
 import "../styles/course.less";
+import { useHistory } from "react-router-dom";
 
 const { Content } = Layout;
 
 function CoursesList() {
   const [courses, setCourses] = useState([]);
+  const history = useHistory();
 
   useEffect(() => {
-    AccountService.getCourses().then((res) => {
-      console.log("[FETCHED COURSES]", res.data);
-      setCourses(res.data);
-    });
+    if ("userData" in localStorage && "jwtToken" in localStorage) {
+      const userData = JSON.parse(localStorage.getItem("userData"));
+
+      AccountService.getCourses(userData.account_id)
+        .then((res) => {
+          console.log("[FETCHED COURSES]", res);
+          setCourses(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      history.push("/login");
+    }
   }, []);
 
   const mockCourses = [

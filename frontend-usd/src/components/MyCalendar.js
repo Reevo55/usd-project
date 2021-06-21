@@ -1,12 +1,20 @@
+import React, { useEffect, useState } from "react";
 import { Calendar, Badge } from "antd";
+import AccountService from "../services/AccountService";
 import moment from "moment";
+
 import "moment/locale/pl";
 moment.locale("pl");
 
 function getListData(value) {
   let listData;
+
+  console.table("[DEBUG DAY]", value.date());
+  console.table("[DEBUG MONTH]", value.month());
+  console.table("[DEBUG MONTH]", value.year());
+
   switch (value.date()) {
-    case 8:
+    case 1:
       listData = [
         { type: "warning", content: "Hurtownie danych" },
         { type: "success", content: "WZPI" },
@@ -55,12 +63,30 @@ function monthCellRender(value) {
   return num ? (
     <div className="notes-month">
       <section>{num}</section>
-      <span>Backlog number</span>
+      <span>Dużo kursów</span>
     </div>
   ) : null;
 }
 
 function MyCalendar() {
+  const [calendarCourses, setCalendarCourses] = useState([]);
+
+  useEffect(() => {
+    try {
+      if ("userData" in localStorage && "jwtToken" in localStorage) {
+        const userData = JSON.parse(localStorage.getItem("userData"));
+
+        AccountService.getCalendar(userData.account_id).then((res) => {
+          console.log("[CALENDAR_DATA]", res.data);
+
+          setCalendarCourses(res.data);
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
   return (
     <Calendar
       dateCellRender={dateCellRender}

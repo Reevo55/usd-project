@@ -9,6 +9,12 @@ class UserService {
       const accessJWT = loggedIn.data.access;
       localStorage.setItem("jwtToken", accessJWT);
       var decoded = jwt_decode(accessJWT);
+      axios.defaults.baseURL = "http://localhost:8000";
+      if ("jwtToken" in localStorage) {
+        axios.defaults.headers.common = {
+          Authorization: `Bearer ${localStorage.getItem("jwtToken")}`,
+        };
+      }
       return decoded;
     } catch (err) {
       alert("Something went wrong, try again!");

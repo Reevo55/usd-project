@@ -16,8 +16,9 @@ const RegistrationForm = () => {
       email: values.email,
     });
 
-    alert("Successfuly signed in!");
-    history.push("/");
+    alert("Please sign in!");
+
+    history.push("/login");
   };
 
   return (

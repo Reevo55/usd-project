@@ -4,9 +4,17 @@ import MyCalendar from "../components/MyCalendar.js";
 const { Content } = Layout;
 
 class Home extends React.Component {
-  title = "Tydzień";
+  title = "Panel użytkownika";
   weekType = "nieparzysty";
-  dates = "10-14 maja";
+  dates = new Date().getDate();
+
+  getWeekNum = () => {
+    const todaydate = new Date();
+    let oneJan = new Date(todaydate.getFullYear(), 0, 1);
+    let numberOfDays = Math.floor((todaydate - oneJan) / (24 * 60 * 60 * 1000));
+    let result = Math.ceil((todaydate.getDay() + 1 + numberOfDays) / 7);
+    return result % 2 === 1 ? "nieparzysty" : "parzysty";
+  };
 
   render() {
     return (
