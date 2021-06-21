@@ -20,6 +20,9 @@ events_router.register(r'events', myapp_views.EventsViewSet, basename='account-e
 courses_router = routers.NestedSimpleRouter(router, r'accounts', lookup='account')
 courses_router.register(r'courses', myapp_views.AccountCoursesViewSet, basename='account-courses')
 
+accounts_router = routers.NestedSimpleRouter(router, r'courses', lookup='course')
+accounts_router.register(r'accounts', myapp_views.CoursesAccountViewSet, basename='course-accounts')
+
 calendar_router = routers.NestedSimpleRouter(router, r'accounts', lookup='account')
 calendar_router.register(r'calendar', myapp_views.CalendarViewSet, basename='account-calendar')
 
@@ -29,5 +32,6 @@ api_url_patterns = [
     url(r'^', include(comments_router.urls)),
     url(r'^', include(events_router.urls)),
     url(r'^', include(courses_router.urls)),
+    url(r'^', include(accounts_router.urls)),
     url(r'^', include(calendar_router.urls)),
 ]
