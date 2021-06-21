@@ -10,6 +10,7 @@ LESSONS_URL = "/lessons/"
 
 def get_token(username, password):
     response = requests.post(LOGIN_URL, data={"username": username, "password": password})
+    print(response.text)
     json_data = json.loads(response.text)
     return json_data['access']
 
@@ -120,7 +121,13 @@ def main():
     access_token = get_token(username, password)
 
     for course in courses:
-        course_id = get_course_id({"name": course["name"], "lesson_type": course["lesson_type"]}, access_token)
+        teacher_name = ' '.join(course['teacher_id'].split()[-2:])
+        teacher_id = get_teacher_id(teacher_name, access_token)
+
+        course_id = get_course_id({
+            "name": course["name"],
+            "lesson_type": course["lesson_type"],
+            "teacher": teacher_id}, access_token)
 
         if course_id is None:
             # add new course
