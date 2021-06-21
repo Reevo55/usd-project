@@ -1,71 +1,46 @@
 import React, { useEffect, useState } from "react";
 import { PageHeader, Layout, Divider } from "antd";
+import { useHistory } from "react-router-dom";
 import CoursesGroup from "../components/CoursesGroup";
 import AccountService from "../services/AccountService";
+import CourseService from "../services/CourseService";
 import "../styles/course.less";
-import { useHistory } from "react-router-dom";
 
 const { Content } = Layout;
 
-function CoursesList() {
+const CoursesList = () => {
   const [courses, setCourses] = useState([]);
   const history = useHistory();
 
   useEffect(() => {
+    getData();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const getData = async () => {
     if ("userData" in localStorage && "jwtToken" in localStorage) {
       const userData = JSON.parse(localStorage.getItem("userData"));
+      const accCourses = await AccountService.getCourses(userData.account_id);
+      const coursesToAdd = accCourses.data;
 
-      AccountService.getCourses(userData.account_id)
-        .then((res) => {
-          console.log("[FETCHED COURSES]", res);
-          setCourses(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      coursesToAdd.forEach(async (course) => {
+        const lessons = await CourseService.getLessons(course.id);
+        course.lessons = [0, 1, 2];
+      });
+
+      setCourses(coursesToAdd);
     } else {
       history.push("/login");
     }
-  }, []);
+  };
 
-  const mockCourses = [
-    {
-      courseName: "Sztuczna inteligencja",
-      lessonType: "laboratorium",
-      teacher: {
-        title: "mgr inz.",
-        teacherName: "Jan Kowalski",
-      },
-      time: "15:15",
-      weekDay: "poniedziałek",
-      link: "https://pwr-edu.zoom.us/j/92500313824?pwd=KzNWcmdYV2pabVYzWTh1enEzS003QT09",
-      code: "Z00-00x",
-    },
-    {
-      courseName: "Sztuczna inteligencja",
-      lessonType: "laboratorium",
-      teacher: {
-        title: "mgr inz.",
-        teacherName: "Jan Kowalski",
-      },
-      time: "15:15",
-      weekDay: "poniedziałek",
-      link: "https://pwr-edu.zoom.us/j/92500313824?pwd=KzNWcmdYV2pabVYzWTh1enEzS003QT09",
-      code: "Z00-00x",
-    },
-    {
-      courseName: "Sztuczna inteligencja",
-      lessonType: "laboratorium",
-      teacher: {
-        title: "mgr inz.",
-        teacherName: "Jan Kowalski",
-      },
-      time: "15:15",
-      weekDay: "poniedziałek",
-      link: "https://pwr-edu.zoom.us/j/92500313824?pwd=KzNWcmdYV2pabVYzWTh1enEzS003QT09",
-      code: "Z00-00x",
-    },
-  ];
+  const mapCourses = (courses) => {
+    if (courses.length > 0) {
+      console.log("[MAP COURSES]", courses);
+      return courses.map((course) => (
+        <CoursesGroup title={course.name} course={course} key={course.id} />
+      ));
+    } else return null;
+  };
 
   return (
     <PageHeader
@@ -75,13 +50,10 @@ function CoursesList() {
     >
       <Divider />
       <Layout className="site-layout">
-        <Content>
-          <CoursesGroup title="Sztuczna inteligencja" courses={mockCourses} />
-          <CoursesGroup title="Hurtownie danych" courses={mockCourses} />
-        </Content>
+        {/* <Content>{mapCourses(courses)}</Content> */}
       </Layout>
     </PageHeader>
   );
-}
+};
 
 export default CoursesList;

@@ -43,7 +43,7 @@ class CourseService {
 
   static async getLessons(courseId) {
     try {
-      const lessons = await axios.post(`${USER_URL}/${courseId}/lessons/`);
+      const lessons = await axios.get(`${USER_URL}/${courseId}/lessons/`);
       return lessons;
     } catch (err) {
       alert("Something went wrong, try again!");
@@ -52,11 +52,20 @@ class CourseService {
 
   static async getLesson(courseId, lessonId) {
     try {
-      const lessons = await axios.post(
+      const lessons = await axios.get(
         `${USER_URL}/${courseId}/lessons/`,
         lessonId
       );
       return lessons;
+    } catch (err) {
+      alert("Something went wrong, try again!");
+    }
+  }
+
+  static async getTeacher(teacherId) {
+    try {
+      const teacher = await axios.get(`api/teachers/${teacherId}`);
+      return teacher;
     } catch (err) {
       alert("Something went wrong, try again!");
     }

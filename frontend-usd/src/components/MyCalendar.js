@@ -9,33 +9,12 @@ moment.locale("pl");
 function getListData(value) {
   let listData;
 
-  console.table("[DEBUG DAY]", value.date());
-  console.table("[DEBUG MONTH]", value.month());
-  console.table("[DEBUG MONTH]", value.year());
+  console.log("[DEBUG DAY]", value.date());
+  console.log("[DEBUG MONTH]", value.month());
+  console.log("[DEBUG MONTH]", value.year());
 
-  switch (value.date()) {
-    case 1:
-      listData = [
-        { type: "warning", content: "Hurtownie danych" },
-        { type: "success", content: "WZPI" },
-      ];
-      break;
-    case 10:
-      listData = [
-        { type: "warning", content: "Hurtownie danych" },
-        { type: "success", content: "WZPI" },
-        { type: "error", content: "EGZAMIN Sztuczna Inteligencja" },
-      ];
-      break;
-    case 15:
-      listData = [
-        { type: "warning", content: "Hurtownie danych" },
-        { type: "success", content: "ZTW" },
-        { type: "error", content: "TEST Lab SI" },
-      ];
-      break;
-    default:
-  }
+  // FILTER BY THIS
+
   return listData || [];
 }
 

@@ -10,16 +10,18 @@ const LoginForm = () => {
 
   const onFinish = async (values) => {
     console.log("Received values of form: ", values);
+    try {
+      const response = await UserService.logIn({
+        username: values.username,
+        password: values.password,
+      });
 
-    const response = await UserService.logIn({
-      username: values.username,
-      password: values.password,
-    });
-
-    localStorage.setItem("userData", JSON.stringify(response));
-    alert("Logged in successfuly!");
-
-    history.push("/");
+      localStorage.setItem("userData", JSON.stringify(response));
+      alert("Logged in successfuly!");
+      history.push("/");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

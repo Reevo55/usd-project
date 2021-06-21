@@ -6,9 +6,10 @@ const { Header } = Layout;
 const { Search } = Input;
 
 class SiteHeader extends React.Component {
-  siteTitle = "Planner";
-  avatarSize = 32;
-  avatarPath = "https://picsum.photos/100";
+  siteTitle = "Planner studenta PWR";
+  avatarSize = 36;
+  avatarPath =
+    "https://dona.pwr.edu.pl/szukaj/img/logo_PWr_kolor_poziom_bez_tla.png";
 
   menu = (
     <Menu>
