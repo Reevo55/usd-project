@@ -34,10 +34,12 @@ const Course = ({ match }) => {
         CourseService.get(match.params.id).then((res) => {
           console.log(res.data);
           setCourse(res.data);
+          if (res.data.teacher != null) {
           CourseService.getTeacher(res.data.teacher).then((res2) => {
             setTeacher(res2.data);
             console.log(res2.data);
           });
+          } 
         });
         CourseService.getComments(match.params.id).then((res) => {
           setComments(res.data);
