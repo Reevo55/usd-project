@@ -49,7 +49,7 @@ class CommentsViewSet(mixins.ListModelMixin,
         return models.Comment.objects.filter(group=self.kwargs['course_pk'])
 
     def create(self, request, course_pk=None):
-        serializer = serializers.CourseCommentSerializer(data=request.data)
+        serializer = serializers.CommentSerializer(data=request.data)
         if serializer.is_valid():
             course = get_object_or_404(models.Course, pk=course_pk)
             serializer.validated_data['group'] = course

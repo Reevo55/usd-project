@@ -81,6 +81,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='account',
             name='groups',
-            field=models.ManyToManyField(through='usd_rest_api.Comment', to='usd_rest_api.Group'),
+            field=models.ManyToManyField(to='usd_rest_api.Group'),
         ),
     ]

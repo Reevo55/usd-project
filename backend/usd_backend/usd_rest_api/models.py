@@ -34,7 +34,7 @@ class Lesson(models.Model):
 class Account(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     image_url = models.CharField(max_length=1024, null=True)
-    groups = models.ManyToManyField(Course, through='Comment')
+    groups = models.ManyToManyField(Course)
 
 
 class Event(models.Model):
