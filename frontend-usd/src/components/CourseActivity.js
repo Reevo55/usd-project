@@ -4,12 +4,12 @@ import { Comment, Avatar } from "antd";
 
 const CourseActivity = ({ comments }) =>
   comments.length ? (
-    comments.map(({ account, content, date }) => (
+    comments.map(({ account, content, when }) => (
       <Comment
-        author={account.login}
-        avatar={<Avatar src={account.avatarPath} alt={account.login} />}
+        author={account.user.username}
+        avatar={<Avatar src={account.image_url} alt={account.user.username} />}
         content={content}
-        datetime={date}
+        datetime={when}
       />
     ))
   ) : (
@@ -20,11 +20,13 @@ CourseActivity.propTypes = {
   comments: propTypes.arrayOf(
     propTypes.shape({
       account: propTypes.shape({
-        login: propTypes.string,
-        avatarPath: propTypes.string,
+        user: propTypes.shape({
+          username: propTypes.string,
+        }),
+        image_url: propTypes.string,
       }),
       content: propTypes.string,
-      date: propTypes.string,
+      when: propTypes.string,
     })
   ),
 };

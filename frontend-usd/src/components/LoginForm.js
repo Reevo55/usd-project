@@ -1,10 +1,27 @@
+import { React } from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import UserService from "../services/UserService";
 
 const LoginForm = () => {
-  const onFinish = (values) => {
+  const history = useHistory();
+
+  const onFinish = async (values) => {
     console.log("Received values of form: ", values);
+    try {
+      const response = await UserService.logIn({
+        username: values.username,
+        password: values.password,
+      });
+
+      localStorage.setItem("userData", JSON.stringify(response));
+      alert("Logged in successfuly!");
+      history.push("/");
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

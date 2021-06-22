@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { PageHeader, Divider, Layout, Typography, Avatar } from "antd";
 import CourseActivity from "../components/CourseActivity";
 import "../styles/course.less";
+import { useHistory } from "react-router-dom";
+import CourseService from "../services/CourseService";
 
 const { Content, Sider } = Layout;
 const { Text, Title, Link } = Typography;
@@ -20,117 +22,77 @@ const SiderPart = ({ children, title }) => (
   </div>
 );
 
-const fetchData = async (path) => {
-  const fetchedData = await fetch(`http://url/${path}`);
-  return await fetchedData.json();
+const Course = ({ match }) => {
+  const [course, setCourse] = useState([]);
+  const [teacher, setTeacher] = useState([]);
+  const [comments, setComments] = useState([]);
+
+  useEffect(() => {
+    try {
+      if ("userData" in localStorage && "jwtToken" in localStorage) {
+        const userData = JSON.parse(localStorage.getItem("userData"));
+        CourseService.get(match.params.id).then((res) => {
+          console.log(res.data);
+          setCourse(res.data);
+          if (res.data.teacher != null) {
+          CourseService.getTeacher(res.data.teacher).then((res2) => {
+            setTeacher(res2.data);
+            console.log(res2.data);
+          });
+          } 
+        });
+        CourseService.getComments(match.params.id).then((res) => {
+          setComments(res.data);
+          console.log(res.data);
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
+  return (
+    <PageHeader
+      className="site-page-header-responsive site-layout-background"
+      onBack={() => window.history.back()}
+      title={course.name}
+      subTitle={course.lesson_type}
+      extra={course.id}
+    >
+      <Divider />
+      <Layout className="site-layout">
+        <Content>
+          <ContentPart title="Informacje">{course.info}</ContentPart>
+          <ContentPart title="Ostatnia aktywność">
+            <CourseActivity comments={comments} />
+          </ContentPart>
+        </Content>
+        <Sider className="site-layout">
+          <SiderPart title="prowadzący">{teacher.title} {teacher.name}</SiderPart>
+          <SiderPart title="konsultacje">
+            <div>{teacher.office_days}</div>
+          </SiderPart>
+          <SiderPart title="kontakt">{teacher.contact}</SiderPart>
+          <SiderPart title="uczestnicy">
+            <div>
+              <Avatar.Group>
+                <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+                <Avatar style={{ backgroundColor: "#f56a00" }}>K</Avatar>
+                <Avatar style={{ backgroundColor: "#fab" }}>M</Avatar>
+                <Avatar style={{ backgroundColor: "#32bda1" }}>K</Avatar>
+                <Avatar style={{ backgroundColor: "#1890ff" }}>+12</Avatar>
+              </Avatar.Group>
+            </div>
+          </SiderPart>
+          <SiderPart title="link do zajęć">
+            <div>
+              <Link href={course.link}>zoom</Link>
+            </div>
+          </SiderPart>
+        </Sider>
+      </Layout>
+    </PageHeader>
+  );
 };
-
-class Course extends React.Component {
-  constructor({ match }) {
-    super({ match });
-    // this.course = fetchCourse(match.url);
-    // this.comments = fetchCourse(`${match.url}/comments`);
-    // const { courseName, lessonType, code, info, teacher, officeDays, link } = this.course
-  }
-
-  course = {
-    courseName: "Sztuczna inteligencja",
-    lessonType: "laboratorium",
-    teacher: {
-      teacherName: "Jan Kowalski",
-      officeDays: "13:00 - 15:00 poniedziałek",
-      contact: "jankowalski@pwr.edu.pl",
-    },
-    link: "https://pwr-edu.zoom.us/j/92500313824?pwd=KzNWcmdYV2pabVYzWTh1enEzS003QT09",
-    code: "Z00-00x",
-    info: [
-      {
-        title: "Zasady zaliczania",
-        body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
-                - aute irure dolor in reprehenderit \
-                - in voluptate velit esse cillum \
-                - dolore eu fugiat nulla pariatur \
-                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      },
-      {
-        title: "Plan",
-        body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
-                - aute irure dolor in reprehenderit \
-                - in voluptate velit esse cillum \
-                - dolore eu fugiat nulla pariatur \
-                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-      },
-    ],
-  };
-  comments = [
-    {
-      account: {
-        login: "login",
-        avatarPath: "https://picsum.photos/100",
-      },
-      content:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date: "10.03.2021",
-    },
-    {
-      account: {
-        login: "login",
-        avatarPath: "https://picsum.photos/100",
-      },
-      content:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      date: "10.03.2021",
-    },
-  ];
-
-  render() {
-    return (
-      <PageHeader
-        className="site-page-header-responsive site-layout-background"
-        onBack={() => window.history.back()}
-        title={this.course.courseName}
-        subTitle={this.course.lessonType}
-        extra={this.course.code}
-      >
-        <Divider />
-        <Layout className="site-layout">
-          <Content>
-            {this.course.info.map(({ title, body }) => (
-              <ContentPart title={title}>{body}</ContentPart>
-            ))}
-            <ContentPart title="Ostatnia aktywność">
-              <CourseActivity comments={this.comments} />
-            </ContentPart>
-          </Content>
-          <Sider className="site-layout">
-            <SiderPart title="prowadzący">
-              {this.course.teacher.teacherName}
-            </SiderPart>
-            <SiderPart title="konsultacje">
-              <div>{this.course.teacher.officeDays}</div>
-            </SiderPart>
-            <SiderPart title="kontakt">{this.course.teacher.contact}</SiderPart>
-            <SiderPart title="uczestnicy">
-              <div>
-                <Avatar.Group>
-                  <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-                  <Avatar style={{ backgroundColor: "#f56a00" }}>K</Avatar>
-                  <Avatar style={{ backgroundColor: "#fab" }}>M</Avatar>
-                  <Avatar style={{ backgroundColor: "#32bda1" }}>K</Avatar>
-                  <Avatar style={{ backgroundColor: "#1890ff" }}>+12</Avatar>
-                </Avatar.Group>
-              </div>
-            </SiderPart>
-            <SiderPart title="link do zajęć">
-              <div>
-                <Link href={this.course.link}>zoom</Link>
-              </div>
-            </SiderPart>
-          </Sider>
-        </Layout>
-      </PageHeader>
-    );
-  }
-}
 
 export default Course;
